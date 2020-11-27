@@ -22,5 +22,24 @@ namespace GrpcServerStreaming
                 Message = "Hello " + request.Name
             });
         }
+
+        public override async Task CallStream(StreamRequest request, IServerStreamWriter<StreamContent> responseStream, ServerCallContext context)
+        {
+            List<StreamContent> list = new List<StreamContent>();
+            list.Add(
+                new StreamContent{Id = 1, Name = "John Doe", Contact = "0214443332"}
+            );
+            list.Add(
+                new StreamContent{Id = 2, Name = "Alex Ross", Contact = "0214453332"}
+            );
+            list.Add(
+                new StreamContent{Id = 3, Name = "Tim Drake", Contact = "0215443332"}
+            );
+            foreach(StreamContent content in list)
+            {
+                await Task.Delay(1000);
+                await responseStream.WriteAsync(content);
+            }
+        }
     }
 }
